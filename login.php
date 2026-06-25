@@ -2,8 +2,7 @@
 
     session_start();
 
-    require_once 'db.php';
-
+    require_once __DIR__ . '/api/config/db.php';
     $error = "";
     $succes= "";
 
@@ -51,9 +50,9 @@
                 <input type="password" id="password" name="password" required><br><br>
 
                 <input class="btn btn-primary" type="submit" value="Se connecter">
-                <input type="submit" value="je n'ai pas de compte" onclick="window.location.href='register.php'; return false;">
-                <input type="submit" value="Mot de passe oublié" onclick="window.location.href='resset_password.php'; return false;">
             </form>
+            <a href="register.php">Je n'ai pas de compte</a>
+            <a href="resset_password.php">Mot de passe oublié</a>
         </div>
     </body>
     </html> 

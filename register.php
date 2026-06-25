@@ -2,12 +2,28 @@
 
 session_start();
 
-require_once 'db.php';
+require_once __DIR__ . '/api/config/db.php';
 
 $error = "";
 $succes= "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $username = strip_tags($_POST['username']);
+    $surname = strip_tags($_POST['surname']);
+    $birthdate = $_POST['birthdate'];
+    $gender = $_POST['gender'];
+    $email = strip_tags($_POST['email']);
+    $num = strip_tags($_POST['num']);
+    $password = $_POST['password'];
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    $token = bin2hex(random_bytes(32));
+
+    if (empty($username) || empty($surname) || empty($birthdate) || empty($gender) || empty($email) || empty($num) || empty($password)) {
+        $error = "Erreur : Tous les champs sont requis.";
+    } else {
+        // requête PDO ici
+    }
     
     if (!isset($_POST['username']) || !isset($_POST['surname']) || !isset($_POST['birthdate']) || !isset($_POST['gender']) || !isset($_POST['email']) || !isset($_POST['num']) || !isset($_POST['password'])) {
         $error = "Erreur : Tous les champs sont requis.";
@@ -15,15 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($username) || empty($surname) || empty($birthdate) || empty($gender) || empty($email) || empty($num) || empty($password)) {
             $error = "Erreur : Tous les champs sont requis.";
         } else {
-            $username = strip_tags($_POST['username']);
-            $surname = strip_tags($_POST['surname']);
-            $birthdate = $_POST['birthdate'];
-            $gender = $_POST['gender'];
-            $email = strip_tags($_POST['email']);
-            $num = strip_tags($_POST['num']);
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-            $req = $bdd->prepare("INSERT INTO users (username, surname, birthdate, gender, email, num, password) VALUES (:username, :surname, :birthdate, :gender, :email, :num, :password)");
+        
+            $req = $bdd->prepare("INSERT INTO users (username, surname, birthdate, gender, email, num, password, token) VALUES (:username, :surname, :birthdate, :gender, :email, :num, :password, :token)");
             $res = $req->execute([
                 'username' => $username,
                 'surname' => $surname,
@@ -31,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'gender' => $gender,
                 'email' => $email,
                 'num' => $num,
-                'password' => $hashedPassword
+                'password' => $hashedPassword,
+                'token' => $token
             ]);
 
             if ($res) {
@@ -57,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h1>Inscription</h1>
-        <p>Bienvenue sur Sira ! Veuillez remplir le formulaire ci-dessous pour vous inscrire.</p>
+        <p>Bienvenue sur Sora ! Veuillez remplir le formulaire ci-dessous pour vous inscrire.</p>
         <form action="register.php" method="POST">
             <label for="name">Prénom de l'utilisateur :</label>
             <input type="text" id="name" name="username" required><br><br>
@@ -85,8 +95,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="password" id="password" name="password" required><br><br>
 
             <input class="btn btn-primary" type="submit" value="S'inscrire">
-            <input type="submit" value="J'ai déja un compte" formaction="login.php">
         </form>
+        <a href="login.php">J'ai déjà un compte</a>
     </div>
 </body>
 </html>
