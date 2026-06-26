@@ -23,3 +23,5 @@ try {
     echo json_encode(['error' => 'Connexion DB échouée : ' . $e->getMessage()]);
     exit;
 }
+
+$bdd = $pdo;
