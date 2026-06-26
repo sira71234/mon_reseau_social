@@ -1,179 +1,156 @@
-<!DOCTYPE html>
-<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil - Réseau Social</title>
-    <!-- Chargement des feuilles de style imposées par l'architecture -->
-    <link rel="stylesheet" href="../../assets/css/main.css">
-    <link rel="stylesheet" href="../../assets/css/profil.css">
-    <!-- Bibliothèque d'icônes pour le design style Facebook -->
-    <link rel="stylesheet" href="https://cloudflare.com">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil Agora</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/profil.css" />
+  <!-- Chargement asynchrone et optimisé du script -->
+  <script src="../assets/js/profil.js" defer></script>
 </head>
 <body>
 
-    <div class="profile-container">
-        
-        <!-- EN-TÊTE DU PROFIL (Design à la Facebook) -->
-        <header class="profile-header">
-            <!-- Couverture (Non stockée en BD, gérée via une image générique ou statique) -->
-            <div class="cover-section">
-                <img id="cover-img" src="../../assets/images/default-cover.jpg" alt="Couverture">
-                <button class="btn-edit-cover"><i class="fas fa-camera"></i> Modifier la photo de couverture</button>
-            </div>
-
-            <!-- Barre d'avatar et informations principales (Données de la table 'users') -->
-            <div class="header-avatar-bar">
-                <div class="avatar-info-wrapper">
-                    <!-- Photo de profil basée sur la colonne 'avatar' de ta BD -->
-                    <div class="profile-avatar-container">
-                        <img id="user-avatar" src="../../assets/images/default.png" alt="Photo de profil">
-                        <label for="upload-avatar" class="avatar-upload-btn">
-                            <i class="fas fa-camera"></i>
-                        </label>
-                    </div>
-                    <div class="user-text-details">
-                        <!-- Nom et Prénom combinés issus de la table 'users' -->
-                        <h1 id="profile-full-name">Chargement...</h1>
-                        <!-- Compteur calculé sur la table 'friends' avec statut 'accepted' -->
-                        <p id="profile-friend-count" class="text-muted">0 ami(s)</p>
-                    </div>
-                </div>
-
-                <!-- Zone d'action dynamique (Ajouter, Accepter, Retirer ou Éditer) -->
-                <div class="header-actions" id="profile-actions-zone">
-                    <!-- Généré dynamiquement en JS selon le statut de la table 'friends' -->
-                </div>
-            </div>
-
-            <!-- Onglets de navigation de la SPA (Sans rechargement de page) -->
-            <nav class="profile-tabs">
-                <button class="tab-btn active" data-target="feed-section">Publications</button>
-                <button class="tab-btn" data-target="about-section">À propos</button>
-                <button class="tab-btn" data-target="friends-section">Amis</button>
-                <button class="tab-btn" id="settings-tab-btn" data-target="settings-section">Paramètres</button>
-            </nav>
-        </header>
-
-        <!-- DISPOSITION DU CONTENU (Système à 2 Colonnes) -->
-        <main class="profile-content-layout">
-            
-            <!-- COLONNE GAUCHE : Cartes d'informations fixes -->
-            <aside class="left-sidebar">
-                <!-- Bloc Présentation / Intro -->
-                <div class="profile-card">
-                    <h3>Intro</h3>
-                    <div class="info-list">
-                        <p><i class="fas fa-envelope"></i> <span id="intro-email">...</span></p>
-                        <!-- Utilise la colonne 'created_at' de la table 'users' -->
-                        <p><i class="fas fa-calendar-alt"></i> Membre depuis le <span id="intro-date">...</span></p>
-                        <!-- Utilise la colonne 'role' de la table 'users' -->
-                        <p><i class="fas fa-user-shield"></i> Statut : <span id="intro-role" class="badge-role">...</span></p>
-                    </div>
-                </div>
-
-                <!-- Bloc Aperçu des Amis (Grille 3x3 Facebook) -->
-                <div class="profile-card">
-                    <div class="card-header-link">
-                        <h3>Amis</h3>
-                        <a href="#" class="view-all-tabs" data-target="friends-section">Voir tous les amis</a>
-                    </div>
-                    <!-- Conteneur pour injecter un aperçu visuel des amis -->
-                    <div class="friends-grid-preview" id="friends-preview-container">
-                        <!-- Rempli par assets/js/friends.js via l'API friends -->
-                    </div>
-                </div>
-            </aside>
-
-            <!-- COLONNE DROITE : Flux et formulaires dynamiques -->
-            <section class="main-profile-stream">
-                
-                <!-- SECTION 1 : PUBLICATIONS (Tables 'posts', 'likes', 'comments') -->
-                <div id="feed-section" class="tab-content active">
-                    <!-- Zone de création rapide (Invisible si on visite le profil d'un autre utilisateur) -->
-                    <div class="profile-card create-post-card" id="my-profile-post-creator">
-                        <div class="create-post-upper">
-                            <img class="mini-avatar src-user-avatar" src="../../assets/images/default.png" alt="Avatar">
-                            <button id="trigger-post-modal">Exprimez-vous...</button>
-                        </div>
-                    </div>
-
-                    <!-- Flux des publications de cet utilisateur précis -->
-                    <div id="user-posts-container">
-                        <!-- Les posts, compteurs de likes et commentaires seront injectés ici -->
-                    </div>
-                </div>
-
-                <!-- SECTION 2 : À PROPOS (Table 'users' complète) -->
-                <div id="about-section" class="tab-content">
-                    <div class="profile-card">
-                        <h3>Informations personnelles</h3>
-                        <div class="about-details">
-                            <p><strong>Nom :</strong> <span id="about-lastname"></span></p>
-                            <p><strong>Prénom :</strong> <span id="about-firstname"></span></p>
-                            <p><strong>Adresse Email :</strong> <span id="about-mail"></span></p>
-                            <p><strong>Type de compte :</strong> <span id="about-role"></span></p>
-                            <p><strong>Identifiant Unique (ID) :</strong> #<span id="about-id"></span></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION 3 : AMIS (Table 'friends' liée aux profils de 'users') -->
-                <div id="friends-section" class="tab-content">
-                    <div class="profile-card">
-                        <h3>Liste complète des amis</h3>
-                        <div class="friends-full-list" id="friends-full-container">
-                            <!-- Liste gérée par api/friends/list.php et injectée en AJAX -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION 4 : PARAMÈTRES (Pour les actions du Jour 3 de Ya) -->
-                <div id="settings-section" class="tab-content">
-                    <!-- Formulaire aligné sur api/friends/profile_edit.php -->
-                    <div class="profile-card">
-                        <h3>Modifier mes informations</h3>
-                        <form id="form-edit-profile" enctype="multipart/form-data">
-                            <div class="form-group">
-                                <label for="edit-prenom">Prénom</label>
-                                <input type="text" name="prenom" id="edit-firstname" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit-nom">Nom</label>
-                                <input type="text" name="nom" id="edit-lastname" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Nouvelle photo de profil</label>
-                                <!-- Input d'upload lié à la colonne 'avatar' de la BD -->
-                                <input type="file" name="avatar" id="upload-avatar-file" accept="image/*">
-                            </div>
-                            <button type="submit" class="btn-primary">Mettre à jour le profil</button>
-                        </form>
-                    </div>
-
-                    <!-- Formulaire aligné sur api/friends/change_password.php -->
-                    <div class="profile-card">
-                        <h3>Sécurité du compte</h3>
-                        <form id="form-change-password">
-                            <div class="form-group">
-                                <label>Mot de passe actuel</label>
-                                <input type="password" name="old_password" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Nouveau mot de passe (8 caractères minimum)</label>
-                                <input type="password" name="new_password" minlength="8" required>
-                            </div>
-                            <button type="submit" class="btn-secondary">Changer le mot de passe</button>
-                        </form>
-                    </div>
-                </div>
-
-            </section>
-        </main>
+  <!-- Navbar -->
+  <nav class="navbar" aria-label="Navigation principale">
+    <span class="navbar__brand">Agoral</span>
+    <div class="navbar__nav">
+      <a href="./feed.html">Accueil</a>
+      <a href="./amis.html">Amis</a>
+      <a href="./chat.html">Chat</a>
+      <a href="./profil.html" class="active" aria-current="page">Profil</a>
     </div>
+    <div class="navbar__right">
+      <div class="navbar__user">
+        <img id="nav-avatar" src="../assets/images/default-avatar.png" alt="Mon avatar" />
+        <span id="nav-nom">—</span>
+      </div>
+    </div>
+  </nav>
 
-    <!-- Liaisons des scripts obligatoires selon la feuille de route -->
-    <script src="../../assets/js/friends.js"></script>
-    <script src="../../assets/js/profil.js"></script>
+  <!-- contenu -->
+  <main class="layout">
+    <div class="card">
+
+      <!-- infos -->
+      <div class="profile-banner"></div>
+      <div class="profile-meta">
+        <div class="avatar-wrap">
+          <img id="profile-avatar" src="../assets/images/default-avatar.png" alt="Photo de profil" />
+          <label class="avatar-change" for="quick-avatar-input" title="Changer la photo"></label>
+          <input type="file" id="quick-avatar-input" accept="image/jpeg,image/png,image/gif" />
+        </div>
+        <div class="profile-info">
+          <p class="profile-info__name" id="profile-fullname">Chargement…</p>
+          <p class="profile-info__email" id="profile-email"></p>
+          <span class="profile-info__role" id="profile-role">user</span>
+        </div>
+      </div>
+
+      <!-- Onglets -->
+      <div class="tabs" role="tablist" aria-label="Options du profil">
+        <button class="tab-btn active" data-tab="infos" role="tab" aria-selected="true" aria-controls="tab-infos">Informations</button>
+        <button class="tab-btn" data-tab="avatar" role="tab" aria-selected="false" aria-controls="tab-avatar">Photo de profil</button>
+        <button class="tab-btn" data-tab="password" role="tab" aria-selected="false" aria-controls="tab-password">Mot de passe</button>
+      </div>
+
+      <!--Informations personnelles -->
+      <div id="tab-infos" class="tab-panel active" role="tabpanel" aria-label="Informations personnelles">
+        <form id="form-profil">
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="nom">Nom</label>
+              <input type="text" id="nom" name="nom" placeholder="Votre nom" required maxlength="60" autocomplete="family-name" />
+            </div>
+
+            <div class="form-group">
+              <label for="prenom">Prénom</label>
+              <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required maxlength="60" autocomplete="given-name" />
+            </div>
+
+            <div class="form-group full">
+              <label for="email">Adresse e-mail</label>
+              <input type="email" id="email" name="email" placeholder="exemple@domaine.com" required autocomplete="email" />
+            </div>
+
+            <div class="form-group full">
+              <label for="bio">Bio</label>
+              <textarea id="bio" name="bio" placeholder="Parlez un peu de vous…" maxlength="300"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="ville">Ville</label>
+              <input type="text" id="ville" name="ville" placeholder="Votre ville" maxlength="80" autocomplete="address-level2" />
+            </div>
+
+            <div class="form-group">
+              <label for="telephone">Téléphone</label>
+              <input type="tel" id="telephone" name="telephone" placeholder="+229 …" maxlength="20" autocomplete="tel" />
+            </div>
+
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-infos">Annuler</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-infos">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+
+      <!--  Photo de profil -->
+      <div id="tab-avatar" class="tab-panel" role="tabpanel" aria-label="Photo de profil">
+        <div class="avatar-preview-zone">
+          <img id="avatar-preview" src="../assets/images/default-avatar.png" alt="Aperçu de la nouvelle photo" />
+          <div class="hint">
+            <strong>Photo de profil</strong>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="avatar-file">Choisir une image</label>
+          <input type="file" id="avatar-file" accept="image/jpeg,image/png,image/gif" />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" id="btn-save-avatar">Mettre à jour la photo</button>
+        </div>
+      </div>
+
+      <!-- modifier le mot de passe -->
+      <div id="tab-password" class="tab-panel" role="tabpanel" aria-label="Modification du mot de passe">
+        <form id="form-password">
+          <div class="form-grid">
+
+            <div class="form-group full">
+              <label for="current-pass">Mot de passe actuel</label>
+              <input type="password" id="current-pass" name="current_password" placeholder="••••••••" required autocomplete="current-password" />
+            </div>
+
+            <div class="form-group">
+              <label for="new-pass">Nouveau mot de passe</label>
+              <input type="password" id="new-pass" name="new_password" placeholder="Entrez votre nouveau mot de passe" required minlength="8" autocomplete="new-password" />
+              <div class="strength-bar">
+                <div class="strength-fill" id="strength-fill"></div>
+              </div>
+              <span class="strength-hint" id="strength-hint"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="confirm-pass">Confirmer le mot de passe</label>
+              <input type="password" id="confirm-pass" name="confirm_password" placeholder="Répétez le mot de passe" required minlength="8" autocomplete="new-password" />
+            </div>
+
+          </div>
+          <div class="form-actions">
+            <button type="reset" class="btn btn-secondary">Annuler</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-pass">Changer le mot de passe</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <button class="btn-logout" id="btn-logout">Déconnexion</button>
+  </main>
+
+  <!-- Toast pour les notifications -->
+  <div id="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+  
+  <script src="../assets/js/profil.js"></script>
 </body>
 </html>
