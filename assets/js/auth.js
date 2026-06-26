@@ -1,26 +1,42 @@
-document.addEventListener('DOMContentLoaded', function() {
+function initForms() {
+    function showMessage(message, color = 'red') {
+        const messageBox = document.getElementById('message');
+        if (messageBox) {
+            messageBox.innerHTML = '<p style="color:' + color + '">' + message + '</p>';
+        }
+    }
+
+    function parseJsonResponse(res) {
+        if (!res.ok) {
+            throw new Error('Erreur serveur');
+        }
+        return res.json();
+    }
+
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
             fetch('api/auth/login.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ email, password })
             })
-            .then(res => res.json())
+            .then(parseJsonResponse)
             .then(data => {
                 if (data.success) {
-                    sessionStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = 'index.html';
+                    sessionStorage.setItem('rss_user', JSON.stringify(data.user));
+                    document.getElementById('navbar').style.display = 'block';
+                    loadView('vues/clients/feed.html');
                 } else {
-                    document.getElementById('message').innerHTML = '<p style="color:red">' + data.message + '</p>';
+                    showMessage(data.message);
                 }
             })
+            .catch(() => showMessage('Connexion impossible pour le moment.'));
         });
     }
 
@@ -29,28 +45,26 @@ document.addEventListener('DOMContentLoaded', function() {
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const username = document.getElementById('username').value;
-            const surname = document.getElementById('surname').value;
-            const birthdate = document.getElementById('birthdate').value;
-            const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
+            const nom = document.getElementById('nom').value;
+            const prenom = document.getElementById('prenom').value;
             const email = document.getElementById('email').value;
-            const num = document.getElementById('num').value;
             const password = document.getElementById('password').value;
         
             fetch('api/auth/register.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, surname, birthdate, gender, email, num, password })
+                body: JSON.stringify({ nom, prenom, email, password })
             })
-            .then(res => res.json())
+            .then(parseJsonResponse)
             .then(data => {
                 if (data.success) {
-                    document.getElementById('message').innerHTML = '<p style="color:green">' + data.message + '</p>';
+                    showMessage(data.message, 'green');
                     registerForm.reset();
                 } else {
-                    document.getElementById('message').innerHTML = '<p style="color:red">' + data.message + '</p>';
+                    showMessage(data.message);
                 }
             })
+            .catch(() => showMessage('Inscription impossible pour le moment.'));
         });
     }  
     
@@ -61,26 +75,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const email = document.getElementById('email').value;
 
-            fetch('api/auth/reset_password.php', {
+            fetch('api/auth/forgot_password.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
             })
-            .then(res => res.json())
+            .then(parseJsonResponse)
             .then(data => {
                 if (data.success) {
-                    document.getElementById('message').innerHTML = '<p style="color:green">' + data.message + '</p>';
+                    showMessage(data.message, 'green');
                     resetForm.reset();
                 } else {
-                    document.getElementById('message').innerHTML = '<p style="color:red">' + data.message + '</p>';
+                    showMessage(data.message);
                 }
             })
+            .catch(() => showMessage('Demande impossible pour le moment.'));
         });
     }  
     
-    const newPasswordForm = document.getElementById('newPassword');
+    const newPasswordForm = document.getElementById('newPasswordForm');
     if (newPasswordForm) {
-        newPasswordForm.addEventListener('submit',function(e){
+        newPasswordForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -89,19 +104,48 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('password').value;
             const confirm_password = document.getElementById('confirm_password').value;
 
-            fetch('api/auth/new_password.php', {
+            fetch('api/auth/reset_password.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, password, confirm_password })
             })
-            .then(res => res.json())
+            .then(parseJsonResponse)
             .then(data => {
                 if (data.success) {
-                    window.location.href = 'login.html';
+                    showMessage(data.message, 'green');
+                    loadView('vues/clients/login.html');
                 } else {
-                    document.getElementById('message').innerHTML = '<p style="color:red">' + data.message + '</p>';
+                    showMessage(data.message);
                 }
             })
-        })
+            .catch(() => showMessage('Modification impossible pour le moment.'));
+        });
     }
-}); 
+
+    // Liens de navigation dans les vues
+    const toRegister = document.getElementById('toRegister');
+    if (toRegister) toRegister.addEventListener('click', () => loadView('vues/clients/register.html'));
+
+    const toLogin = document.getElementById('toLogin');
+    if (toLogin) toLogin.addEventListener('click', () => loadView('vues/clients/login.html'));
+
+    const toReset = document.getElementById('toReset');
+    if (toReset) toReset.addEventListener('click', () => loadView('vues/clients/reset_password.html'));
+}
+
+function logout() {
+    fetch('api/auth/logout.php')
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            sessionStorage.removeItem('rss_user');
+            document.getElementById('navbar').style.display = 'none';
+            loadView('vues/clients/login.html');
+        }
+    })
+    .catch(() => {
+        sessionStorage.removeItem('rss_user');
+        document.getElementById('navbar').style.display = 'none';
+        loadView('vues/clients/login.html');
+    });
+}

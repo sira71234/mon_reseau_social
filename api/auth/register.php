@@ -11,35 +11,44 @@ use PHPMailer\PHPMailer\Exception;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $data = json_decode(file_get_contents('php://input'), true);
-    $username = strip_tags($data['username'] ?? '');
-    $surname = strip_tags($data['surname'] ?? '');
-    $birthdate = $data['birthdate'] ?? '';
-    $gender = $data['gender'] ?? '';
+    $nom = trim(strip_tags($data['nom'] ?? ''));
+    $prenom = trim(strip_tags($data['prenom'] ?? ''));
     $email = strip_tags($data['email'] ?? '');
-    $num = strip_tags($data['num'] ?? '');
     $password = $data['password'] ?? '';
 
-    if (empty($username) || empty($surname) || empty($birthdate) || empty($gender) || empty($email) || empty($num) || empty($password)) {
+    if (empty($nom) || empty($prenom) || empty($email) || empty($password)) {
         echo json_encode(['success' => false, 'message' => 'Tous les champs sont requis.']);
         exit();
     }
 
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(['success' => false, 'message' => 'Email invalide.']);
+        exit();
+    }
+
+    if (strlen($password) < 8) {
+        echo json_encode(['success' => false, 'message' => 'Le mot de passe doit contenir au moins 8 caractères.']);
+        exit();
+    }
+
+    $req = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+    $req->execute(['email' => $email]);
+    if ((int) $req->fetchColumn() > 0) {
+        echo json_encode(['success' => false, 'message' => 'Cet email est déjà utilisé.']);
+        exit();
+    }
+
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
     $token = bin2hex(random_bytes(32));
-    $token_expires_at = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
     try {
-        $req = $pdo->prepare("INSERT INTO users (username, surname, birthdate, gender, email, num, password, token, token_expires_at, is_verified) VALUES (:username, :surname, :birthdate, :gender, :email, :num, :password, :token, :token_expires_at, 0)");
+        $req = $pdo->prepare("INSERT INTO users (nom, prenom, email, password, token, is_active, created_at) VALUES (:nom, :prenom, :email, :password, :token, 0, NOW())");
         $req->execute([
-            'username' => $username,
-            'surname' => $surname,
-            'birthdate' => $birthdate,
-            'gender' => $gender,
+            'nom' => $nom,
+            'prenom' => $prenom,
             'email' => $email,
-            'num' => $num,
             'password' => $hashedPassword,
-            'token' => $token,
-            'token_expires_at' => $token_expires_at
+            'token' => $token
         ]);
 
         $mail = new PHPMailer(true);
@@ -56,7 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->isHTML(true);
             $mail->Subject = 'Vérification de votre compte';
             $verify_link = "http://localhost/mon_reseau_social/api/auth/verify.php?token=" . $token;
-            $mail->Body = "Clique sur ce lien pour vérifier votre compte : <a href='$verify_link'>$verify_link</a>";
+            $mail->Body = '<div style="font-family:Arial;max-width:600px;margin:auto;border:1px solid #ddd;border-radius:8px;overflow:hidden">' .
+                '<div style="background:#1A56A0;padding:20px;text-align:center"><h1 style="color:#fff;margin:0">Réseau Social</h1></div>' .
+                '<div style="padding:30px"><p>Bonjour <strong>' . htmlspecialchars($nom) . '</strong>,</p>' .
+                '<p>Cliquez sur le bouton ci-dessous pour activer votre compte :</p>' .
+                '<a href="' . $verify_link . '" style="background:#1A56A0;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none">Activer mon compte</a></div></div>';
             $mail->send();
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Erreur envoi mail : ' . $mail->ErrorInfo]);
