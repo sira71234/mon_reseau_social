@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agora - Accueil</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/feed.css">
+</head>
+<body>
+    <nav id="navbar">
+        <div class="container">
+            <h1>Agora</h1>
+            <input type="text" placeholder="Rechercher...">
+            <div id="nav-profil">
+                <span>Mon profil</span>
+                <a href="chat.html">Chat</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <aside id="sidebar-gauche">
+            <div class="card">
+                <p>Mon profil</p>
+                <p>Mes amis</p>
+                <p>Mes groupes</p>
+            </div>
+        </aside>
+        <section id="flux">
+            <!-- Créer un post -->
+            <div class="card" id="creer-post">
+                <input type="text" id="input-post" placeholder="Quoi de neuf ?">
+                <button class="btn btn-primary" id="btn-publier">Publier</button>
+            </div>
+            <!-- Liste des posts -->
+            <div id="liste-posts">
+            </div>
+
+        </section>
+        <aside id="sidebar-droite">
+            <div class="card">
+                <h3>Suggestions d'amis</h3>
+                <div id="liste-suggestions">
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <script src="../../assets/js/feed.js"></script>
+
+</body>
+</html>
