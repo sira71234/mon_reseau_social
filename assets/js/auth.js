@@ -1,33 +1,32 @@
 function initForms() {
-    function showMessage(message, color = 'red') {
-        const messageBox = document.getElementById('message');
+    function showMessage(message, color) {
+        color = color || 'red';
+        var messageBox = document.getElementById('message');
         if (messageBox) {
             messageBox.innerHTML = '<p style="color:' + color + '">' + message + '</p>';
         }
     }
 
     function parseJsonResponse(res) {
-        if (!res.ok) {
-            throw new Error('Erreur serveur');
-        }
+        if (!res.ok) throw new Error('Erreur serveur');
         return res.json();
     }
 
-    const loginForm = document.getElementById('loginForm');
+    // LOGIN
+    var loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
 
             fetch('api/auth/login.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email: email, password: password })
             })
             .then(parseJsonResponse)
-            .then(data => {
+            .then(function(data) {
                 if (data.success) {
                     sessionStorage.setItem('rss_user', JSON.stringify(data.user));
                     document.getElementById('navbar').style.display = 'block';
@@ -36,27 +35,30 @@ function initForms() {
                     showMessage(data.message);
                 }
             })
-            .catch(() => showMessage('Connexion impossible pour le moment.'));
+            .catch(function() { showMessage('Connexion impossible pour le moment.'); });
         });
     }
 
-    const registerForm = document.getElementById('registerForm');
+    // REGISTER
+    var registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            var username = document.getElementById('username').value;
+            var surname = document.getElementById('surname').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var birthdate = document.getElementById('birthdate') ? document.getElementById('birthdate').value : '';
+            var gender = document.querySelector('input[name="gender"]:checked') ? document.querySelector('input[name="gender"]:checked').value : '';
+            var num = document.getElementById('num') ? document.getElementById('num').value : '';
 
-            const nom = document.getElementById('nom').value;
-            const prenom = document.getElementById('prenom').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-        
             fetch('api/auth/register.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nom, prenom, email, password })
+                body: JSON.stringify({ username: username, surname: surname, email: email, password: password, birthdate: birthdate, gender: gender, num: num })
             })
             .then(parseJsonResponse)
-            .then(data => {
+            .then(function(data) {
                 if (data.success) {
                     showMessage(data.message, 'green');
                     registerForm.reset();
@@ -64,24 +66,24 @@ function initForms() {
                     showMessage(data.message);
                 }
             })
-            .catch(() => showMessage('Inscription impossible pour le moment.'));
+            .catch(function() { showMessage('Inscription impossible pour le moment.'); });
         });
-    }  
-    
-    const resetForm = document.getElementById('resetForm');
+    }
+
+    // RESET PASSWORD (forgot)
+    var resetForm = document.getElementById('resetForm');
     if (resetForm) {
         resetForm.addEventListener('submit', function(e) {
             e.preventDefault();
-
-            const email = document.getElementById('email').value;
+            var email = document.getElementById('email').value;
 
             fetch('api/auth/forgot_password.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ email: email })
             })
             .then(parseJsonResponse)
-            .then(data => {
+            .then(function(data) {
                 if (data.success) {
                     showMessage(data.message, 'green');
                     resetForm.reset();
@@ -89,61 +91,58 @@ function initForms() {
                     showMessage(data.message);
                 }
             })
-            .catch(() => showMessage('Demande impossible pour le moment.'));
+            .catch(function() { showMessage('Demande impossible pour le moment.'); });
         });
-    }  
-    
-    const newPasswordForm = document.getElementById('newPasswordForm');
+    }
+
+    // NEW PASSWORD
+    var newPasswordForm = document.getElementById('newPasswordForm');
     if (newPasswordForm) {
         newPasswordForm.addEventListener('submit', function(e) {
             e.preventDefault();
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
-
-            const password = document.getElementById('password').value;
-            const confirm_password = document.getElementById('confirm_password').value;
+            var urlParams = new URLSearchParams(window.location.search);
+            var token = urlParams.get('token');
+            var password = document.getElementById('password').value;
+            var confirm_password = document.getElementById('confirm_password').value;
 
             fetch('api/auth/reset_password.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token, password, confirm_password })
+                body: JSON.stringify({ token: token, password: password, confirm_password: confirm_password })
             })
             .then(parseJsonResponse)
-            .then(data => {
+            .then(function(data) {
                 if (data.success) {
                     showMessage(data.message, 'green');
-                    loadView('vues/clients/login.html');
+                    setTimeout(function() { loadView('vues/clients/login.html'); }, 2000);
                 } else {
                     showMessage(data.message);
                 }
             })
-            .catch(() => showMessage('Modification impossible pour le moment.'));
+            .catch(function() { showMessage('Modification impossible pour le moment.'); });
         });
     }
 
-    // Liens de navigation dans les vues
-    const toRegister = document.getElementById('toRegister');
-    if (toRegister) toRegister.addEventListener('click', () => loadView('vues/clients/register.html'));
+    // NAVIGATION LINKS
+    var toRegister = document.getElementById('toRegister');
+    if (toRegister) toRegister.addEventListener('click', function(e) { e.preventDefault(); loadView('vues/clients/register.html'); });
 
-    const toLogin = document.getElementById('toLogin');
-    if (toLogin) toLogin.addEventListener('click', () => loadView('vues/clients/login.html'));
+    var toLogin = document.getElementById('toLogin');
+    if (toLogin) toLogin.addEventListener('click', function(e) { e.preventDefault(); loadView('vues/clients/login.html'); });
 
-    const toReset = document.getElementById('toReset');
-    if (toReset) toReset.addEventListener('click', () => loadView('vues/clients/reset_password.html'));
+    var toReset = document.getElementById('toReset');
+    if (toReset) toReset.addEventListener('click', function(e) { e.preventDefault(); loadView('vues/clients/reset_password.html'); });
 }
 
 function logout() {
     fetch('api/auth/logout.php')
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            sessionStorage.removeItem('rss_user');
-            document.getElementById('navbar').style.display = 'none';
-            loadView('vues/clients/login.html');
-        }
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        sessionStorage.removeItem('rss_user');
+        document.getElementById('navbar').style.display = 'none';
+        loadView('vues/clients/login.html');
     })
-    .catch(() => {
+    .catch(function() {
         sessionStorage.removeItem('rss_user');
         document.getElementById('navbar').style.display = 'none';
         loadView('vues/clients/login.html');

@@ -19,30 +19,28 @@
 
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/feed.js"></script>
+    <script src="assets/js/friends.js"></script>
     <script>
         function loadView(url) {
             fetch(url)
             .then(res => {
-                if (!res.ok) {
-                    throw new Error('Vue introuvable');
-                }
+                if (!res.ok) throw new Error('Vue introuvable');
                 return res.text();
             })
             .then(html => {
                 document.getElementById('app').innerHTML = html;
-                initForms();
-                if (typeof initFeed === 'function') {
-                    initFeed();
-                }
+                if (typeof initForms === 'function') initForms();
+                if (typeof initFeed === 'function') initFeed();
+                if (typeof initFriends === 'function') initFriends();
             })
             .catch(() => {
-                document.getElementById('app').innerHTML = '<div class="container"><h1>Page introuvable</h1><p>Cette vue n&apos;est pas encore disponible.</p></div>';
+                document.getElementById('app').innerHTML = '<div class="container"><h1>Page introuvable</h1></div>';
             });
         }
 
-        // Vérifier si connecté
-        const user = sessionStorage.getItem('rss_user');
         const params = new URLSearchParams(window.location.search);
+        const user = sessionStorage.getItem('rss_user');
+
         if (params.has('token')) {
             loadView('vues/clients/new_password.html');
             document.getElementById('navbar').style.display = 'none';

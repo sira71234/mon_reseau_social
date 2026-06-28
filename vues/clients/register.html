@@ -1,19 +1,35 @@
+<div class="container auth-container">
+    <h1>Inscription</h1>
+    <p>Bienvenue sur Agora ! Créez votre compte.</p>
+    <div id="message"></div>
+    <form id="registerForm">
+        <label for="username">Nom :</label>
+        <input type="text" id="username" name="username" required><br><br>
 
-    <div class="container">
-        <h1>Inscription</h1>
-        <p>Bienvenue sur Agora ! Créez votre compte.</p>
-        <div id="message"></div>
-        <form id="registerForm">
-            <label for="nom">Nom :</label>
-            <input type="text" id="nom" name="nom" required><br><br>
-            <label for="prenom">Prénom :</label>
-            <input type="text" id="prenom" name="prenom" required><br><br>
-            <label for="email">Email :</label>
-            <input type="email" id="email" name="email" required><br><br>
-            <label for="password">Mot de passe :</label>
-            <input type="password" id="password" name="password" minlength="8" required><br><br>
-            <input type="submit" value="S'inscrire">
-        </form>
-        <a id="toLogin" href="#">J'ai déjà un compte</a>
-    </div>
-    
+        <label for="surname">Prénom :</label>
+        <input type="text" id="surname" name="surname" required><br><br>
+
+        <label for="birthdate">Date de naissance :</label>
+        <input type="date" id="birthdate" name="birthdate" required><br><br>
+
+        <label>Genre :</label><br>
+        <input type="radio" id="gender_male" name="gender" value="male" required> Homme
+        <input type="radio" id="gender_female" name="gender" value="female"> Femme
+        <input type="radio" id="gender_not_specified" name="gender" value="not specified"> Ne pas spécifier
+        <input type="radio" id="gender_other" name="gender" value="other"> Autre
+        <br><br>
+
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="num">Numéro de téléphone :</label>
+        <input type="text" id="num" name="num" required><br><br>
+
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="password" minlength="8" required><br><br>
+
+        <button type="submit">S'inscrire</button>
+    </form>
+    <br>
+    <a id="toLogin" href="#">J'ai déjà un compte</a>
+</div>

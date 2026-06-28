@@ -1,81 +1,70 @@
 function getCurrentUser() {
-    const storedUser = sessionStorage.getItem('rss_user');
-    return storedUser ? JSON.parse(storedUser) : null;
+    var stored = sessionStorage.getItem('rss_user');
+    return stored ? JSON.parse(stored) : null;
 }
 
 function escapeHtml(value) {
-    return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 function initFeed() {
-    const postForm = document.getElementById('postForm');
-    const postsList = document.getElementById('postsList');
-    const profileInfo = document.getElementById('profileInfo');
+    var postForm = document.getElementById('postForm');
+    var postsList = document.getElementById('postsList');
+    var profileInfo = document.getElementById('profileInfo');
 
     if (profileInfo) {
-        const user = getCurrentUser();
-        profileInfo.innerHTML = user
-            ? '<p><strong>Nom :</strong> ' + escapeHtml(user.nom) + '</p><p><strong>Prénom :</strong> ' + escapeHtml(user.prenom) + '</p><p><strong>Email :</strong> ' + escapeHtml(user.email) + '</p>'
-            : '<p>Aucun utilisateur connecté.</p>';
+        var user = getCurrentUser();
+        if (user) {
+            profileInfo.innerHTML = '<p><strong>' + escapeHtml(user.surname) + ' ' + escapeHtml(user.username) + '</strong></p><p>' + escapeHtml(user.email) + '</p>';
+        }
     }
 
-    if (!postForm || !postsList) {
-        return;
-    }
+    if (!postForm || !postsList) return;
 
     postForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const user = getCurrentUser();
-        const contentInput = document.getElementById('postContent');
-        const content = contentInput.value.trim();
-        const imageInput = document.getElementById('postImage');
+        var user = getCurrentUser();
+        var content = document.getElementById('postContent').value.trim();
+        var imageInput = document.getElementById('postImage');
 
-        if (!user || !content) {
-            return;
-        }
+        if (!user || !content) return;
 
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: user.id, content })
-        };
+        var body, headers;
 
         if (imageInput && imageInput.files.length > 0) {
-            const formData = new FormData();
+            var formData = new FormData();
             formData.append('user_id', user.id);
             formData.append('content', content);
             formData.append('image', imageInput.files[0]);
-            requestOptions.headers = {};
-            requestOptions.body = formData;
+            body = formData;
+            headers = {};
+        } else {
+            body = JSON.stringify({ user_id: user.id, content: content });
+            headers = { 'Content-Type': 'application/json' };
         }
 
-        fetch('api/posts/create.php', {
-            method: requestOptions.method,
-            headers: requestOptions.headers,
-            body: requestOptions.body
-        })
-        .then(res => res.json())
-        .then(data => {
-            const message = document.getElementById('message');
+        fetch('api/posts/create.php', { method: 'POST', headers: headers, body: body })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            var msg = document.getElementById('message');
             if (data.success) {
-                contentInput.value = '';
-                if (imageInput) {
-                    imageInput.value = '';
-                }
-                message.innerHTML = '<p style="color:green">' + data.message + '</p>';
+                document.getElementById('postContent').value = '';
+                if (imageInput) imageInput.value = '';
+                if (msg) msg.innerHTML = '<p style="color:green">' + data.message + '</p>';
                 loadPosts();
             } else {
-                message.innerHTML = '<p style="color:red">' + data.message + '</p>';
+                if (msg) msg.innerHTML = '<p style="color:red">' + data.message + '</p>';
             }
         })
-        .catch(() => {
-            document.getElementById('message').innerHTML = '<p style="color:red">Impossible de publier pour le moment.</p>';
+        .catch(function() {
+            var msg = document.getElementById('message');
+            if (msg) msg.innerHTML = '<p style="color:red">Impossible de publier.</p>';
         });
     });
 
@@ -83,111 +72,87 @@ function initFeed() {
 }
 
 function loadPosts() {
-    const postsList = document.getElementById('postsList');
-    if (!postsList) {
-        return;
-    }
+    var postsList = document.getElementById('postsList');
+    if (!postsList) return;
 
-    postsList.innerHTML = '<div class="container"><p>Chargement...</p></div>';
+    postsList.innerHTML = '<p>Chargement...</p>';
 
     fetch('api/posts/feed.php')
-        .then(res => res.json())
-        .then(data => {
-            if (!data.success || data.posts.length === 0) {
-                postsList.innerHTML = '<div class="container"><p>Aucune publication pour le moment.</p></div>';
-                return;
-            }
-
-            postsList.innerHTML = data.posts.map(renderPost).join('');
-        })
-        .catch(() => {
-            postsList.innerHTML = '<div class="container"><p>Impossible de charger le fil.</p></div>';
-        });
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (!data.success || data.posts.length === 0) {
+            postsList.innerHTML = '<p>Aucune publication pour le moment.</p>';
+            return;
+        }
+        postsList.innerHTML = data.posts.map(renderPost).join('');
+    })
+    .catch(function() {
+        postsList.innerHTML = '<p>Impossible de charger le fil.</p>';
+    });
 }
 
 function renderPost(post) {
-    const user = getCurrentUser();
-    const canDelete = user && String(user.id) === String(post.user_id);
-    const image = post.image ? '<img class="post-image" src="' + escapeHtml(post.image) + '" alt="Image du post">' : '';
-    const deleteButton = canDelete
-        ? '<button type="button" onclick="deletePost(' + Number(post.id) + ')">Supprimer</button>'
-        : '';
+    var user = getCurrentUser();
+    var canDelete = user && String(user.id) === String(post.user_id);
+    var image = post.image ? '<img src="' + escapeHtml(post.image) + '" alt="image" style="max-width:100%">' : '';
+    var deleteBtn = canDelete ? '<button onclick="deletePost(' + Number(post.id) + ')">Supprimer</button>' : '';
 
-    return `
-        <article class="post">
-            <div class="post-header">
-                <img src="${escapeHtml(post.avatar || 'assets/images/default.png')}" alt="" class="avatar" onerror="this.style.visibility='hidden'">
-                <div>
-                    <strong>${escapeHtml(post.prenom + ' ' + post.nom)}</strong>
-                    <small>${escapeHtml(post.created_at)}</small>
-                </div>
-            </div>
-            <p>${escapeHtml(post.content)}</p>
-            ${image}
-            <small>${Number(post.likes_count || 0)} like(s) - ${Number(post.comments_count || 0)} commentaire(s)</small>
-            <div class="post-actions">
-                <button type="button" onclick="likePost(${Number(post.id)})">J'aime</button>
-                <button type="button" onclick="likePost(${Number(post.id)}, 'dislike')">Je n'aime pas</button>
-                ${deleteButton}
-            </div>
-            <form class="comment-form" onsubmit="addComment(event, ${Number(post.id)})">
-                <input type="text" name="comment" placeholder="Ajouter un commentaire" required>
-                <input type="submit" value="Commenter">
-            </form>
-        </article>
-    `;
+    return '<article class="post" style="border:1px solid #ddd;padding:15px;margin:10px 0;border-radius:8px">' +
+        '<div class="post-header" style="display:flex;align-items:center;gap:10px;margin-bottom:10px">' +
+        '<strong>' + escapeHtml(post.surname + ' ' + post.username) + '</strong>' +
+        '<small style="color:#999">' + escapeHtml(post.created_at) + '</small></div>' +
+        '<p>' + escapeHtml(post.content) + '</p>' +
+        image +
+        '<div style="margin:10px 0;color:#666"><small>' + Number(post.likes_count || 0) + ' j\'aime · ' + Number(post.dislikes_count || 0) + ' je n\'aime pas · ' + Number(post.comments_count || 0) + ' commentaire(s)</small></div>' +
+        '<div style="display:flex;gap:10px">' +
+        '<button onclick="likePost(' + Number(post.id) + ', \'like\')">J\'aime</button>' +
+        '<button onclick="likePost(' + Number(post.id) + ', \'dislike\')">Je n\'aime pas</button>' +
+        deleteBtn + '</div>' +
+        '<form onsubmit="addComment(event, ' + Number(post.id) + ')" style="margin-top:10px;display:flex;gap:10px">' +
+        '<input type="text" name="comment" placeholder="Commenter..." required style="flex:1">' +
+        '<button type="submit">Envoyer</button></form>' +
+        '</article>';
 }
 
-function likePost(postId, type = 'like') {
-    const user = getCurrentUser();
-    if (!user) {
-        return;
-    }
+function likePost(postId, type) {
+    var user = getCurrentUser();
+    if (!user) return;
 
     fetch('api/posts/like.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: user.id, post_id: postId, type })
+        body: JSON.stringify({ user_id: user.id, post_id: postId, type: type })
     })
-    .then(res => res.json())
-    .then(() => loadPosts());
+    .then(function(res) { return res.json(); })
+    .then(function() { loadPosts(); });
 }
 
 function addComment(event, postId) {
     event.preventDefault();
-
-    const user = getCurrentUser();
-    const input = event.target.elements.comment;
-    const content = input.value.trim();
-
-    if (!user || !content) {
-        return;
-    }
+    var user = getCurrentUser();
+    var input = event.target.elements.comment;
+    var content = input.value.trim();
+    if (!user || !content) return;
 
     fetch('api/posts/comment.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: user.id, post_id: postId, content })
+        body: JSON.stringify({ user_id: user.id, post_id: postId, content: content })
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            input.value = '';
-        }
-    });
+    .then(function(res) { return res.json(); })
+    .then(function(data) { if (data.success) { input.value = ''; loadPosts(); } });
 }
 
 function deletePost(postId) {
-    const user = getCurrentUser();
-    if (!user) {
-        return;
-    }
+    var user = getCurrentUser();
+    if (!user) return;
+    if (!confirm('Supprimer ce post ?')) return;
 
     fetch('api/posts/delete.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: postId, user_id: user.id })
     })
-    .then(res => res.json())
-    .then(() => loadPosts());
+    .then(function(res) { return res.json(); })
+    .then(function() { loadPosts(); });
 }

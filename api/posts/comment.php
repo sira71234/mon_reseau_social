@@ -14,11 +14,7 @@ if (empty($user_id) || empty($post_id) || empty($content)) {
 }
 
 $req = $pdo->prepare("INSERT INTO comments (user_id, post_id, content) VALUES (:user_id, :post_id, :content)");
-$res = $req->execute([
-    'user_id' => $user_id,
-    'post_id' => $post_id,
-    'content' => $content
-]);
+$res = $req->execute(['user_id' => $user_id, 'post_id' => $post_id, 'content' => $content]);
 
 if ($res) {
     echo json_encode(['success' => true, 'message' => 'Commentaire ajouté.']);

@@ -14,22 +14,25 @@ if (empty($user_id) || empty($post_id)) {
 }
 
 if (!in_array($type, ['like', 'dislike'], true)) {
-    echo json_encode(['success' => false, 'message' => 'Type de réaction invalide.']);
+    echo json_encode(['success' => false, 'message' => 'Type invalide.']);
     exit();
 }
 
-// Vérifier si le like existe déjà
 $req = $pdo->prepare("SELECT * FROM likes WHERE user_id = :user_id AND post_id = :post_id");
 $req->execute(['user_id' => $user_id, 'post_id' => $post_id]);
 $like = $req->fetch(PDO::FETCH_ASSOC);
 
 if ($like) {
-    // Supprimer le like
-    $req = $pdo->prepare("DELETE FROM likes WHERE user_id = :user_id AND post_id = :post_id");
-    $req->execute(['user_id' => $user_id, 'post_id' => $post_id]);
-    echo json_encode(['success' => true, 'action' => 'unliked']);
+    if ($like['type'] === $type) {
+        $req = $pdo->prepare("DELETE FROM likes WHERE user_id = :user_id AND post_id = :post_id");
+        $req->execute(['user_id' => $user_id, 'post_id' => $post_id]);
+        echo json_encode(['success' => true, 'action' => 'unliked']);
+    } else {
+        $req = $pdo->prepare("UPDATE likes SET type = :type WHERE user_id = :user_id AND post_id = :post_id");
+        $req->execute(['type' => $type, 'user_id' => $user_id, 'post_id' => $post_id]);
+        echo json_encode(['success' => true, 'action' => 'changed']);
+    }
 } else {
-    // Ajouter le like
     $req = $pdo->prepare("INSERT INTO likes (user_id, post_id, type) VALUES (:user_id, :post_id, :type)");
     $req->execute(['user_id' => $user_id, 'post_id' => $post_id, 'type' => $type]);
     echo json_encode(['success' => true, 'action' => 'liked']);

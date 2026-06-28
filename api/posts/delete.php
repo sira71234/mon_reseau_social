@@ -12,7 +12,6 @@ if (empty($id) || empty($user_id)) {
     exit();
 }
 
-// Vérifier que c'est bien l'auteur qui supprime
 $req = $pdo->prepare("SELECT * FROM posts WHERE id = :id AND user_id = :user_id");
 $req->execute(['id' => $id, 'user_id' => $user_id]);
 $post = $req->fetch(PDO::FETCH_ASSOC);

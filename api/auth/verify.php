@@ -11,7 +11,7 @@ if (empty($token)) {
     exit();
 }
 
-$req = $pdo->prepare("SELECT * FROM users WHERE token = :token");
+$req = $pdo->prepare("SELECT * FROM users WHERE token = :token AND token_expires_at > NOW()");
 $req->execute(['token' => $token]);
 $user = $req->fetch(PDO::FETCH_ASSOC);
 
@@ -20,11 +20,12 @@ if (!$user) {
     exit();
 }
 
-$req = $pdo->prepare("UPDATE users SET is_active = 1, token = NULL WHERE id = :id");
+$req = $pdo->prepare("UPDATE users SET is_active = 1, is_verified = 1, token = NULL, token_expires_at = NULL WHERE id = :id");
 $res = $req->execute(['id' => $user['id']]);
 
 if ($res) {
-    echo json_encode(['success' => true, 'message' => 'Compte vérifié avec succès.']);
+    header('Location: http://localhost/mon_reseau_social/index.html');
+    exit();
 } else {
     echo json_encode(['success' => false, 'message' => 'Impossible de vérifier le compte.']);
 }

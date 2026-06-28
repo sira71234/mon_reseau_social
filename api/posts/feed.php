@@ -5,8 +5,8 @@ require_once __DIR__ . '/../../api/config/db.php';
 $req = $pdo->query("
     SELECT
         posts.*,
-        users.nom,
-        users.prenom,
+        users.username,
+        users.surname,
         users.avatar,
         SUM(CASE WHEN likes.type = 'like' THEN 1 ELSE 0 END) AS likes_count,
         SUM(CASE WHEN likes.type = 'dislike' THEN 1 ELSE 0 END) AS dislikes_count,
