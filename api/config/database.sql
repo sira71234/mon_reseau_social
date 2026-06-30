@@ -10,8 +10,13 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     avatar VARCHAR(255) DEFAULT 'assets/images/default.png',
     token VARCHAR(64) DEFAULT NULL,
+    token_expires_at DATETIME DEFAULT NULL,
     is_active TINYINT(1) DEFAULT 0,
+    is_verified TINYINT(1) DEFAULT 0,
     role ENUM('user', 'moderateur', 'admin') DEFAULT 'user',
+    birthdate DATE DEFAULT NULL,
+    gender VARCHAR(20) DEFAULT NULL,
+    num VARCHAR(20) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
