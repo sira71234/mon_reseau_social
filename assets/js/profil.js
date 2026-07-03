@@ -8,8 +8,7 @@ function initProfilPage() {
         return;
     }
 
-    // 1) Affichage immédiat avec les infos déjà connues (stockées à la connexion)
-    //    -> l'en-tête n'est plus vide en attendant la réponse du serveur.
+    // 1) Affichage immédiat avec les infos déjà connues
     renderProfilHeader(user);
 
     // 2) Puis on va chercher les infos à jour en base (compteurs, date de naissance, etc.)
@@ -69,7 +68,7 @@ function toggleProfilSection(sectionId, buttonId) {
     }
 }
 
-// ================= AFFICHAGE DES INFOS DU PROFIL =================
+// AFFICHAGE DES INFOS DU PROFIL 
 
 function defaultAvatar() {
     // Petit avatar gris par défaut, généré directement en JS (pas de fichier requis)
@@ -110,13 +109,11 @@ function loadProfilData(userId, fillForm) {
             }
         })
         .catch(function () {
-            // Si le serveur ne répond pas, l'en-tête reste quand même visible
-            // grâce à renderProfilHeader() déjà appelé avec les infos de session.
+
         });
 }
 
-// ================= SOUMISSION DU FORMULAIRE "MES INFORMATIONS" =================
-
+//  SOUMISSION DU FORMULAIRE 
 function submitProfilInfo(userId) {
     var msg = document.getElementById('profilMessage');
     var genderChecked = document.querySelector('input[name="editGender"]:checked');
