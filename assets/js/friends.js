@@ -1,8 +1,3 @@
-// friends.js
-// Gère la page "Mon profil" (infos + mot de passe) et la page "Amis"
-// (demandes reçues, mes amis, autres utilisateurs).
-// Les fonctions getCurrentUser() et escapeHtml() viennent de feed.js (chargé avant ce fichier).
-
 function initFriends() {
     if (document.getElementById('profilInfoForm')) {
         initProfilPage();
