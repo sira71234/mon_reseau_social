@@ -45,7 +45,7 @@ if ((int) $req->fetchColumn() > 0) {
 }
 
 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-$token = bin2hex(random_bytes(32));
+$token = strval(random_int(100000, 999999));
 $token_expires_at = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
 try {
@@ -75,21 +75,20 @@ try {
         $mail->addAddress($email);
         $mail->CharSet = 'UTF-8';
         $mail->isHTML(true);
-        $mail->Subject = 'Vérification de votre compte';
-        $verify_link = "http://localhost/mon_reseau_social/api/auth/verify.php?token=" . $token;
+        $mail->Subject = 'Vérification de votre compte Agora';
         $mail->Body = '<div style="font-family:Arial;max-width:600px;margin:auto;border:1px solid #ddd;border-radius:8px;overflow:hidden">' .
             '<div style="background:#1A56A0;padding:20px;text-align:center"><h1 style="color:#fff;margin:0">Agora</h1></div>' .
             '<div style="padding:30px"><p>Bonjour <strong>' . htmlspecialchars($surname . ' ' . $username) . '</strong>,</p>' .
-            '<p>Cliquez sur le bouton ci-dessous pour activer votre compte :</p>' .
-            '<a href="' . $verify_link . '" style="background:#1A56A0;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none">Activer mon compte</a>' .
-            '<p style="margin-top:20px;color:#999;font-size:12px">Ce lien expire dans 10 minutes.</p></div></div>';
+            '<p>Votre code de vérification est :</p>' .
+            '<h1 style="text-align:center;letter-spacing:10px;color:#1A56A0">' . $token . '</h1>' .
+            '<p style="color:#999;font-size:12px">Ce code expire dans 10 minutes.</p></div></div>';
         $mail->send();
     } catch (Exception $e) {
         echo json_encode(['success' => false, 'message' => 'Erreur envoi mail : ' . $mail->ErrorInfo]);
         exit();
     }
 
-    echo json_encode(['success' => true, 'message' => 'Inscription réussie ! Vérifiez votre email pour activer votre compte.']);
+    echo json_encode(['success' => true, 'message' => 'Inscription réussie ! Vérifiez votre email.', 'email' => $email]);
     exit();
 
 } catch (PDOException $e) {
