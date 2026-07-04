@@ -1,14 +1,17 @@
 /*C'est la page de discussion*/
+let intervalChat = null;
+
+function initChat(){
 const zoneMessages=document.getElementById("zone-messages");
 const inputMessage=document.getElementById("input-message");
 const btnEnvoyer=document.getElementById("btn-envoyer");
-const sidebar=document.getElementById("sidebar")
+const sidebar=document.getElementById("sidebar");
 let conversationsActive =null;
 function chargerConversations(){
     fetch("../../api/chat/conversations.php?utilisateur_id=1")
     .then(reponse => reponse.json())
     .then(donnes => {donnes.conversations.forEach(conversations=>{
-        sidebar.innerHTML += `<div class="conversations">${conversation.expediteur_id}</div>`
+        sidebar.innerHTML += `<div class="conversations">${conversations.expediteur_id}</div>`
     })})
 };
 function chargerMessages(destinataire_id){
@@ -35,5 +38,16 @@ function envoyerMessages(){
     inputMessage.value = "";
     chargerMessages(1);
 })};
-setInterval(()=>chargerMessages(1),3000)
+chargerConversations();
+chargerMessages(1);
+
+intervalChat = setInterval(()=>chargerMessages(1),3000);
 btnEnvoyer.addEventListener("click", envoyerMessages);
+}
+
+function arreterChat(){
+    if (intervalChat) {
+        clearInterval(intervalChat);
+        intervalChat = null;
+    }
+}

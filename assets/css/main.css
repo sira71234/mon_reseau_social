@@ -65,3 +65,100 @@ body {
 .btn-primary:hover {
   background-color: #154f8a;
 }
+
+/* FORMULAIRES GENERIQUES (hors auth) */
+.container form input:not([type="radio"]):not([type="checkbox"]),
+.container form textarea,
+.container form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: var(--espace-petit);
+  border: 1px solid var(--bordure-couleur);
+  border-radius: var(--bordure-rayon);
+  font-size: 14px;
+}
+
+/* BOUTON PAR DEFAUT (fallback si pas de classe .btn) */
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--bordure-rayon);
+  background-color: var(--couleur-primaire);
+  color: var(--texte-blanc);
+  cursor: pointer;
+  font-size: 14px;
+}
+button:hover {
+  background-color: #154f8a;
+}
+
+/* TITRES / LABELS */
+h1 {
+  color: var(--couleur-primaire);
+  margin-bottom: var(--espace-moyen);
+}
+h2 {
+  color: var(--couleur-primaire);
+  margin: var(--espace-moyen) 0 var(--espace-petit);
+  font-size: 1.2em;
+}
+label {
+  display: block;
+  margin-bottom: var(--espace-petit);
+  font-weight: bold;
+}
+
+/* AMIS - liste */
+.friend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espace-petit);
+  border-bottom: 1px solid var(--bordure-couleur);
+}
+
+/* POSTS (feed) */
+.post {
+  background-color: var(--fond-carte);
+  border: 1px solid var(--bordure-couleur);
+  padding: var(--espace-moyen);
+  margin: var(--espace-petit) 0;
+  border-radius: var(--bordure-rayon);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-petit);
+  margin-bottom: var(--espace-petit);
+}
+
+.post-date {
+  color: var(--texte-secondaire);
+}
+
+.post-image {
+  max-width: 100%;
+  border-radius: var(--bordure-rayon);
+  margin: var(--espace-petit) 0;
+}
+
+.post-stats {
+  margin: var(--espace-petit) 0;
+  color: var(--texte-secondaire);
+}
+
+.post-actions {
+  display: flex;
+  gap: var(--espace-petit);
+}
+
+.post-comment-form {
+  margin-top: var(--espace-petit);
+  display: flex;
+  gap: var(--espace-petit);
+}
+
+.post-comment-input {
+  flex: 1;
+}
