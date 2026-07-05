@@ -244,7 +244,7 @@
         window.location.href = 'login.html';
     } else {
         document.getElementById('adminName').textContent =
-            admin.prenom + ' ' + admin.nom + ' (' + admin.role + ')';
+    admin.surname + ' ' + admin.username + ' (' + admin.role + ')';
     }
 
     // Charger les statistiques
@@ -265,7 +265,7 @@
                 data.stats.last_users.forEach(u => {
                     tbody.innerHTML += `
                         <tr>
-                            <td>${u.prenom} ${u.nom}</td>
+                            <td>${u.surname} ${u.username}</td>
                             <td>${u.email}</td>
                             <td><span class="badge ${u.role}">${u.role}</span></td>
                             <td>${new Date(u.created_at).toLocaleDateString('fr-FR')}</td>

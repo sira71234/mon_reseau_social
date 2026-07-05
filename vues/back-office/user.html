@@ -137,7 +137,7 @@
     </div>
 
     <div class="main">
-        <h2>👥 Gestion des utilisateurs</h2>
+        <h2> Gestion des utilisateurs</h2>
 
         <div class="section">
             <table>
@@ -176,7 +176,7 @@
                 data.users.forEach(u => {
                     tbody.innerHTML += `
                         <tr>
-                            <td>${u.prenom} ${u.nom}</td>
+                            <td>${u.surname} ${u.username}</td>
                             <td>${u.email}</td>
                             <td><span class="badge ${u.role}">${u.role}</span></td>
                             <td>${new Date(u.created_at).toLocaleDateString('fr-FR')}</td>

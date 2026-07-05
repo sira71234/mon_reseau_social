@@ -40,24 +40,26 @@ try {
 
     // Stocker en session serveur
     $_SESSION['rss_admin'] = [
-        'id'     => $user['id'],
-        'nom'    => $user['nom'],
-        'prenom' => $user['prenom'],
-        'email'  => $user['email'],
-        'role'   => $user['role'],
-    ];
+    'id'       => $user['id'],
+    'username' => $user['username'],
+    'surname'  => $user['surname'],
+    'email'    => $user['email'],
+    'role'     => $user['role'],
+];
 
     // Réponse JSON (jamais le password !)
     echo json_encode([
         'success' => true,
         'message' => 'Connexion réussie.',
         'user'    => [
-            'id'     => $user['id'],
-            'nom'    => $user['nom'],
-            'prenom' => $user['prenom'],
-            'email'  => $user['email'],
-            'role'   => $user['role'],
-        ]
+            $_SESSION['rss_admin'] = [
+    'id'       => $user['id'],
+    'username' => $user['username'],
+    'surname'  => $user['surname'],
+    'email'    => $user['email'],
+    'role'     => $user['role'],
+
+            ]]
     ]);
 
 } catch (PDOException $e) {

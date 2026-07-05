@@ -166,7 +166,7 @@
                 data.posts.forEach(p => {
                     tbody.innerHTML += `
                         <tr>
-                            <td>${p.prenom} ${p.nom}</td>
+                            <td>${p.surname} ${p.username}</td>
                             <td title="${p.content}">${p.content}</td>
                             <td>${p.image ? ' Oui' : '—'}</td>
                             <td>${new Date(p.created_at).toLocaleDateString('fr-FR')}</td>

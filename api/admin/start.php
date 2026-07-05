@@ -25,11 +25,12 @@ try {
     $likes = $pdo->query("SELECT COUNT(*) FROM likes")->fetchColumn();
 
     // 5 derniers utilisateurs inscrits
-    $stmt = $pdo->query(
-        "SELECT nom, prenom, email, role, created_at 
-         FROM users 
-         ORDER BY created_at DESC 
-         LIMIT 5"
+   $stmt = $pdo->query(
+    "SELECT username, surname, email, role, created_at 
+     FROM users 
+     ORDER BY created_at DESC 
+     LIMIT 5"
+
     );
     $last_users = $stmt->fetchAll();
 
