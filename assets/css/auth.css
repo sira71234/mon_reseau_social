@@ -1,0 +1,96 @@
+.auth-container {
+    max-width: 420px;
+    margin: 80px auto;
+    background-color: var(--fond-carte);
+    padding: var(--espace-grand);
+    border-radius: var(--bordure-rayon);
+    box-shadow: var(--ombre-carte);
+}
+
+.auth-container h1 {
+    color: var(--couleur-primaire);
+    font-size: 22px;
+    margin-bottom: var(--espace-petit);
+}
+
+.auth-container p {
+    color: var(--texte-secondaire);
+    font-size: 14px;
+    margin-bottom: var(--espace-moyen);
+}
+
+#message {
+    padding: var(--espace-petit);
+    border-radius: var(--bordure-rayon);
+    font-size: 14px;
+    margin-bottom: var(--espace-moyen);
+    display: none;
+}
+
+#message.success {
+    background-color: #d4edda;
+    color: #155724;
+    display: block;
+}
+
+#message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    display: block;
+}
+
+.auth-container form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-moyen);
+}
+
+.auth-container label {
+    font-size: 14px;
+    color: var(--texte-secondaire);
+}
+
+.auth-container input[type="text"],
+.auth-container input[type="email"],
+.auth-container input[type="password"] {
+    width: 100%;
+    padding: var(--espace-petit);
+    border: 1px solid var(--bordure-couleur);
+    border-radius: var(--bordure-rayon);
+    font-size: 14px;
+}
+
+.auth-container input[type="text"]:focus,
+.auth-container input[type="email"]:focus,
+.auth-container input[type="password"]:focus {
+    outline: none;
+    border-color: var(--couleur-primaire);
+}
+
+.auth-container input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--couleur-primaire);
+    color: var(--texte-blanc);
+    border: none;
+    border-radius: var(--bordure-rayon);
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.auth-container input[type="submit"]:hover {
+    background-color: #154f8a;
+}
+
+.auth-container a {
+    display: block;
+    text-align: center;
+    color: var(--couleur-primaire);
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: var(--espace-petit);
+}
+
+.auth-container a:hover {
+    text-decoration: underline;
+}
