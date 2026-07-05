@@ -1,27 +1,55 @@
 <div class="container">
-    <h1>Mon Profil</h1>
-    <div id="message"></div>
-    <div id="profileInfo"></div>
+    <h1>Mon profil</h1>
+    <div id="profilMessage"></div>
+
+    <div class="profil-header" style="display:flex;align-items:center;gap:20px;margin-bottom:20px">
+        <img id="profilAvatar" src="" alt="Photo de profil" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:1px solid #ddd;background:#eee">
+        <div>
+            <p><strong id="profilNomComplet"></strong></p>
+            <p id="profilEmail" style="color:#666"></p>
+            <p><span id="profilNbAmis">0</span> ami(s) &middot; <span id="profilNbPosts">0</span> publication(s)</p>
+        </div>
+    </div>
 
     <h2>Modifier mes informations</h2>
-    <form id="profileForm">
-        <label for="username">Nom :</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="surname">Prénom :</label>
-        <input type="text" id="surname" name="surname" required><br><br>
-        <label for="email">Email :</label>
-        <input type="email" id="email" name="email" required><br><br>
-        <label for="avatar">Photo de profil :</label>
-        <input type="file" id="avatar" name="avatar" accept="image/*"><br><br>
-        <button type="submit">Enregistrer</button>
+    <form id="profilInfoForm">
+        <label for="avatarInput">Photo de profil</label><br>
+        <input type="file" id="avatarInput" accept="image/*"><br><br>
+
+        <label for="editUsername">Nom</label><br>
+        <input type="text" id="editUsername" required><br><br>
+
+        <label for="editSurname">Prénom</label><br>
+        <input type="text" id="editSurname" required><br><br>
+
+        <label for="editBirthdate">Date de naissance</label><br>
+        <input type="date" id="editBirthdate"><br><br>
+
+        <label>Genre</label><br>
+        <input type="radio" id="edit_gender_male" name="editGender" value="male"> <label for="edit_gender_male">Homme</label>
+        <input type="radio" id="edit_gender_female" name="editGender" value="female"> <label for="edit_gender_female">Femme</label>
+        <input type="radio" id="edit_gender_not_specified" name="editGender" value="not specified"> <label for="edit_gender_not_specified">Ne pas spécifier</label>
+        <input type="radio" id="edit_gender_other" name="editGender" value="other"> <label for="edit_gender_other">Autre</label>
+        <br><br>
+
+        <label for="editNum">Numéro de téléphone</label><br>
+        <input type="text" id="editNum"><br><br>
+
+        <button type="submit">Enregistrer les modifications</button>
     </form>
 
-    <h2>Changer de mot de passe</h2>
-    <form id="changePasswordForm">
-        <label for="old_password">Ancien mot de passe :</label>
-        <input type="password" id="old_password" name="old_password" required><br><br>
-        <label for="new_password">Nouveau mot de passe :</label>
-        <input type="password" id="new_password" name="new_password" minlength="8" required><br><br>
-        <button type="submit">Modifier</button>
+    <h2>Changer mon mot de passe</h2>
+    <div id="passwordMessage"></div>
+    <form id="passwordForm">
+        <label for="currentPassword">Mot de passe actuel</label><br>
+        <input type="password" id="currentPassword" required><br><br>
+
+        <label for="newPassword">Nouveau mot de passe</label><br>
+        <input type="password" id="newPassword" minlength="8" required><br><br>
+
+        <label for="confirmPassword">Confirmer le nouveau mot de passe</label><br>
+        <input type="password" id="confirmPassword" minlength="8" required><br><br>
+
+        <button type="submit">Changer le mot de passe</button>
     </form>
 </div>
