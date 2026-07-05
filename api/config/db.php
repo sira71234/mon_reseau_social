@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'reseau_social');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASS', 'root');
 define('UPLOAD_DIR', 'assets/images/uploads/');
 
 // Connexion PDO
