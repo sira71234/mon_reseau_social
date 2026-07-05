@@ -2,6 +2,8 @@ function loadView(url) {
     var app = document.getElementById('app');
     app.innerHTML = '<p style="text-align:center;padding:20px">Chargement...</p>';
     
+    if (typeof arreterChat === 'function') arreterChat();
+
     fetch(url)
     .then(function(res) {
         if (!res.ok) throw new Error('Vue introuvable');
@@ -13,7 +15,6 @@ function loadView(url) {
         if (typeof initFeed === 'function') initFeed();
         if (typeof initFriends === 'function') initFriends();
         if (typeof initChat === 'function') initChat();
-        if(typeof arretterChat === 'function')arretterChat();
         if (typeof initProfil === 'function') initProfil();
     })
     .catch(function() {

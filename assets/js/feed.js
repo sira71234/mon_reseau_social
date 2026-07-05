@@ -94,22 +94,25 @@ function loadPosts() {
 function renderPost(post) {
     var user = getCurrentUser();
     var canDelete = user && String(user.id) === String(post.user_id);
-    var image = post.image ? '<img src="' + escapeHtml(post.image) + '" alt="image" style="max-width:100%">' : '';
+    var image = post.image ? '<img src="' + escapeHtml(post.image) + '" alt="image" class="post-image">' : '';
     var deleteBtn = canDelete ? '<button onclick="deletePost(' + Number(post.id) + ')">Supprimer</button>' : '';
 
-    return '<article class="post" style="border:1px solid #ddd;padding:15px;margin:10px 0;border-radius:8px">' +
-        '<div class="post-header" style="display:flex;align-items:center;gap:10px;margin-bottom:10px">' +
+    return '<article class="post">' +
+        '<div class="post-header">' +
         '<strong>' + escapeHtml(post.surname + ' ' + post.username) + '</strong>' +
-        '<small style="color:#999">' + escapeHtml(post.created_at) + '</small></div>' +
+        '<small class="post-date">' + escapeHtml(post.created_at) + '</small></div>' +
         '<p>' + escapeHtml(post.content) + '</p>' +
         image +
-        '<div style="margin:10px 0;color:#666"><small>' + Number(post.likes_count || 0) + ' j\'aime · ' + Number(post.dislikes_count || 0) + ' je n\'aime pas · ' + Number(post.comments_count || 0) + ' commentaire(s)</small></div>' +
-        '<div style="display:flex;gap:10px">' +
+        '<div class="post-stats"><small>' + Number(post.likes_count || 0) +
+        ' j\'aime · ' + Number(post.dislikes_count || 0) +
+        ' je n\'aime pas · ' + Number(post.comments_count || 0) +
+        ' commentaire(s)</small></div>' +
+        '<div class="post-actions">' +
         '<button onclick="likePost(' + Number(post.id) + ', \'like\')">J\'aime</button>' +
         '<button onclick="likePost(' + Number(post.id) + ', \'dislike\')">Je n\'aime pas</button>' +
         deleteBtn + '</div>' +
-        '<form onsubmit="addComment(event, ' + Number(post.id) + ')" style="margin-top:10px;display:flex;gap:10px">' +
-        '<input type="text" name="comment" placeholder="Commenter..." required style="flex:1">' +
+        '<form onsubmit="addComment(event, ' + Number(post.id) + ')" class="post-comment-form">' +
+        '<input type="text" name="comment" placeholder="Commenter..." required class="post-comment-input">' +
         '<button type="submit">Envoyer</button></form>' +
         '</article>';
 }

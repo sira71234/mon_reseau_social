@@ -1,14 +1,13 @@
 <div class="chat-layout">
-    <aside class="chat-sidebar">
+    <aside id="sidebar">
         <h2>Conversations</h2>
         <div id="conversationsList"></div>
     </aside>
-    <main class="chat-main">
-        <div id="chatMessages" class="chat-messages"></div>
-        <form id="chatForm" style="display:none">
-            <input type="text" id="chatInput" placeholder="Votre message..." required>
-            <input type="file" id="chatImage" accept="image/*">
-            <button type="submit">Envoyer</button>
-        </form>
-    </main>
+    <section class="chat-main">
+        <div id="zone-messages"></div>
+        <div id="zone-saisie">
+            <input type="text" id="input-message" placeholder="Ecrire un message..."/>
+            <button id="btn-envoyer">Envoyer</button>
+        </div>
+    </section>
 </div>
