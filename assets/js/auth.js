@@ -60,8 +60,9 @@ function initForms() {
             .then(parseJsonResponse)
             .then(function(data) {
                 if (data.success) {
-                    showMessage(data.message, 'green');
+                    sessionStorage.setItem('verify_email', data.email);
                     registerForm.reset();
+                    loadView('vues/clients/verify.html');
                 } else {
                     showMessage(data.message);
                 }
@@ -70,7 +71,37 @@ function initForms() {
         });
     }
 
-    // RESET PASSWORD (forgot)
+    // VERIFY
+    var verifyForm = document.getElementById('verifyForm');
+    if (verifyForm) {
+        var emailInput = document.getElementById('verifyEmail');
+        if (emailInput) emailInput.value = sessionStorage.getItem('verify_email') || '';
+
+        verifyForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = document.getElementById('verifyEmail').value;
+            var code = document.getElementById('code').value;
+
+            fetch('api/auth/verify.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, code: code })
+            })
+            .then(parseJsonResponse)
+            .then(function(data) {
+                if (data.success) {
+                    sessionStorage.removeItem('verify_email');
+                    showMessage(data.message, 'green');
+                    setTimeout(function() { loadView('vues/clients/login.html'); }, 2000);
+                } else {
+                    showMessage(data.message);
+                }
+            })
+            .catch(function() { showMessage('Vérification impossible pour le moment.'); });
+        });
+    }
+
+    // RESET PASSWORD
     var resetForm = document.getElementById('resetForm');
     if (resetForm) {
         resetForm.addEventListener('submit', function(e) {
@@ -123,7 +154,7 @@ function initForms() {
         });
     }
 
-    // NAVIGATION LINKS
+    // NAVIGATION
     var toRegister = document.getElementById('toRegister');
     if (toRegister) toRegister.addEventListener('click', function(e) { e.preventDefault(); loadView('vues/clients/register.html'); });
 
@@ -137,7 +168,7 @@ function initForms() {
 function logout() {
     fetch('api/auth/logout.php')
     .then(function(res) { return res.json(); })
-    .then(function(data) {
+    .then(function() {
         sessionStorage.removeItem('rss_user');
         document.getElementById('navbar').style.display = 'none';
         loadView('vues/clients/login.html');
